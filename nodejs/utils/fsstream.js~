@@ -1,0 +1,6 @@
+var fs = require('fs');
+
+var readable = fs.createReadStream('./data.txt');
+var writable = fs.createWriteStream('./data.txt');
+
+readable.pipe(writable);

@@ -1,0 +1,5 @@
+<div>To try websocket:<br><br>
+    <code>
+        var ws = new WebSocket("ws://localhost:9000/ws");<br> ws.onmessage = function(msg){console.log(msg);};<br> ws.send("hi")<br>ws.send(JSON.stringify({"a":1}));
+    </code>
+</div>
