@@ -13,4 +13,6 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
 
+libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.12-RC1"
+
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
