@@ -5,6 +5,11 @@ This file will be packaged with your application when using `activator dist`.
 
 There are several demonstration files available in this template.
 
+Prerequisites:
+
+1) start MongoDB on localhost (check application.conf configuration)
+
+
 Controllers
 ===========
 

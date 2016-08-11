@@ -12,5 +12,15 @@ GET     /message                    controllers.AsyncController.message
 GET     /wspage                     controllers.HomeController.wspage
 GET     /ws                         controllers.HomeController.ws
 
+# REST API for Entity
+GET     /v1/entities/:id            controllers.ModelController.read(id)
+POST    /v1/entities/new            controllers.ModelController.create
+PUT     /v1/entities/:id            controllers.ModelController.update(id)
+DELETE  /v1/entities/:id            controllers.ModelController.delete(id)
+
+#PATCH
+#POST   /v1/entities  (as list/bulk)
+#GET   /v1/entities -- returns all
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
