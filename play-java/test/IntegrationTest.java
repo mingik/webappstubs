@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.bson.types.ObjectId;
 import org.junit.*;
 
 import play.Application;
@@ -46,24 +47,26 @@ public class IntegrationTest {
                 WSClient ws = WS.newClient(3333);
 
                 // Create
-                CompletableFuture<WSResponse> createResponse = ws.url("/v1/entities/new").post(Json.toJson("{\"id\":1, \"name\":\"entity1\"}")).toCompletableFuture();
+                String id = (new ObjectId()).toHexString();
+                CompletableFuture<WSResponse> createResponse = ws.url("/v1/entities/new").post(Json.toJson("{\"age\":16, \"name\":\"entity1\",\"_id\":\"" + id + "\"}")).toCompletableFuture();
                 WSResponse wsResponse = createResponse.get();
                 assertEquals(CREATED, wsResponse.getStatus());
+                assertEquals(id, wsResponse.getHeader("Location"));
 
                 // Read
-                CompletableFuture<WSResponse> readResponse = ws.url("/v1/entities/1").get().toCompletableFuture();
+                CompletableFuture<WSResponse> readResponse = ws.url("/v1/entities/" + id).get().toCompletableFuture();
                 wsResponse = readResponse.get(6, TimeUnit.SECONDS);
                 ObjectNode readJS = (ObjectNode) wsResponse.asJson();
-                assertEquals(readJS.get("id").asInt(), 1);
+                assertEquals(readJS.get("age").asInt(), 16);
                 assertEquals(readJS.get("name").asText(), "entity1");
 
                 // update
-                CompletableFuture<WSResponse> updateResponse = ws.url("/v1/entities/1").put(Json.toJson("{\"id\":1, \"name\":\"entity2\"}")).toCompletableFuture();
+                CompletableFuture<WSResponse> updateResponse = ws.url("/v1/entities/" + id).put(Json.toJson("{\"age\":17, \"name\":\"entity2\"}")).toCompletableFuture();
                 wsResponse = updateResponse.get(6, TimeUnit.SECONDS);
                 assertEquals(OK, wsResponse.getStatus());
 
                 // delete
-                CompletableFuture<WSResponse> deleteResponse = ws.url("/v1/entities/1").delete().toCompletableFuture();
+                CompletableFuture<WSResponse> deleteResponse = ws.url("/v1/entities/" + id).delete().toCompletableFuture();
                 wsResponse = deleteResponse.get(6, TimeUnit.SECONDS);
                 assertEquals(OK, wsResponse.getStatus());
             } catch (Exception e) {

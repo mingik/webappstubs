@@ -1,5 +1,6 @@
 package services;
 
+import com.mongodb.WriteConcern;
 import com.mongodb.async.client.MongoClient;
 import com.mongodb.async.client.MongoClients;
 import com.mongodb.async.client.MongoCollection;
@@ -32,5 +33,5 @@ public class MongoService {
 
 
     public MongoCollection getModelCollection() {
-        return client.getDatabase(dbName).getCollection(collectionName); }
+        return client.getDatabase(dbName).getCollection(collectionName).withWriteConcern(WriteConcern.JOURNALED); }
 }

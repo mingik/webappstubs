@@ -1,6 +1,7 @@
 package controllers;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import play.Configuration;
 import play.libs.F;
 import play.libs.Json;
@@ -34,10 +35,11 @@ public class ModelController extends Controller {
         this.mongoService = mongoService;
     }
 
+    // id is objectId (or "_id" field)
     public CompletionStage<Result> read(String id) {
         // waits for 5 seconds!
         CompletableFuture<Result> ret = Futures.timeout((Result)notFound(), 5, TimeUnit.SECONDS).toCompletableFuture();
-        mongoService.getModelCollection().find(eq("id", Integer.valueOf(id))).into(new ArrayList<>(), (o, throwable)-> {
+        mongoService.getModelCollection().find(eq("_id", id)).into(new ArrayList<>(), (o, throwable)-> {
             if (throwable != null)
                 ret.complete(notFound());
             else
@@ -48,12 +50,16 @@ public class ModelController extends Controller {
 
     public CompletionStage<Result> create() {
         Document payload = Document.parse(request().body().asJson().textValue());
+        String passedId = (String) payload.get("_id");
+        final String id = passedId.isEmpty() ? new ObjectId().toString() : passedId;
+        payload.put("_id", id);
+
         CompletableFuture<Result> ret = new CompletableFuture<>();
         mongoService.getModelCollection().insertOne(payload, (aVoid, throwable) -> {
             if (throwable != null)
                 ret.complete(internalServerError()); // or badRequest?!
             else
-                ret.complete(created());
+                ret.complete(created().withHeader("Location", id));
         });
         return ret;
     }
@@ -61,7 +67,7 @@ public class ModelController extends Controller {
     public CompletionStage<Result> update(String id) {
         Document payload = Document.parse(request().body().asJson().textValue());
         CompletableFuture<Result> ret = new CompletableFuture<>();
-        mongoService.getModelCollection().updateOne(eq("id", id), new Document("$set", payload), (updateResult, throwable) -> {
+        mongoService.getModelCollection().updateOne(eq("_id", id), new Document("$set", payload), (updateResult, throwable) -> {
             if (throwable != null)
                 ret.complete(internalServerError());
             else
@@ -72,7 +78,7 @@ public class ModelController extends Controller {
 
     public CompletionStage<Result> delete(String id) {
         CompletableFuture<Result> ret = new CompletableFuture<>();
-        mongoService.getModelCollection().deleteOne(eq("id", id), (deleteResult, throwable) -> {
+        mongoService.getModelCollection().deleteOne(eq("_id", id), (deleteResult, throwable) -> {
             if (throwable != null)
                 ret.complete(internalServerError());
             else
