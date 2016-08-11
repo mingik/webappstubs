@@ -22,6 +22,10 @@ public class MongoService {
     @Inject
     public MongoService(Configuration configuration) {
         this.configuration = configuration;
+        initFields();
+    }
+
+    private void initFields() {
         dbName = configuration.getString("mongodb.dbname");
         collectionName = configuration.getString("mongodb.colname");
     }
