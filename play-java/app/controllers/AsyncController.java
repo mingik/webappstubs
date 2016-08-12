@@ -50,9 +50,9 @@ public class AsyncController extends Controller {
     private CompletionStage<String> getFutureMessage(long time, TimeUnit timeUnit) {
         CompletableFuture<String> future = new CompletableFuture<>();
         actorSystem.scheduler().scheduleOnce(
-            Duration.create(time, timeUnit),
-            () -> future.complete("Hi!"),
-            exec
+                Duration.create(time, timeUnit),
+                (Runnable) () -> future.complete("Hi!"),
+                exec
         );
         return future;
     }

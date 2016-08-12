@@ -1,4 +1,4 @@
-name := """play-scala-websocket"""
+name := """play-scala-ws-mgdb"""
 
 version := "1.0-SNAPSHOT"
 

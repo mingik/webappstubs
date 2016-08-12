@@ -1,4 +1,4 @@
-name := """play-java-websocket"""
+name := """play-java-ws-mgdb"""
 
 version := "1.0-SNAPSHOT"
 
